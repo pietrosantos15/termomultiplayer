@@ -4,7 +4,7 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const fs = require('fs');
 
-// --- MUDANÇA 1: CARREGAMENTO INTELIGENTE DOS DICIONÁRIOS ---
+// --- CARREGAMENTO INTELIGENTE DOS DICIONÁRIOS ---
 let bancoRespostas = []; // Só palavras comuns para sortear
 const mapaValidacao = new Map(); // Mapa para validar tudo e corrigir acentos
 
@@ -34,6 +34,12 @@ try {
 const app = express();
 app.use(cors());
 
+// --- MUDANÇA AQUI: ROTA PADRÃO PARA O RENDER NÃO DAR ERRO ---
+app.get("/", (req, res) => {
+    res.send("Servidor rodando! 🚀");
+});
+// ------------------------------------------------------------
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: "*", methods: ["GET", "POST"] },
@@ -45,7 +51,7 @@ const ROUND_TIME = 60; // Tempo da partida em segundos
 
 const generateRoomCode = () => Math.random().toString(36).substring(2, 8).toUpperCase();
 
-// --- MUDANÇA 2: SORTEIO USA APENAS O BANCO DE RESPOSTAS ---
+// --- SORTEIO USA APENAS O BANCO DE RESPOSTAS ---
 const getNewWord = (oldWord) => {
     if (bancoRespostas.length === 0) return "TERMO";
     
@@ -58,7 +64,7 @@ const getNewWord = (oldWord) => {
     return newWord; // Retorna a palavra já com acento (ex: "ÁGUA")
 };
 
-// --- CONTROLE DE TEMPO (INTACTO) ---
+// --- CONTROLE DE TEMPO ---
 const stopTimer = (roomId) => {
     if (roomTimers[roomId]) {
         clearInterval(roomTimers[roomId]);
@@ -201,7 +207,7 @@ io.on("connection", (socket) => {
     const room = rooms[roomId];
     if (!room || room.status !== 'playing') return;
 
-    // --- MUDANÇA 3: VALIDAÇÃO E NORMALIZAÇÃO ---
+    // --- VALIDAÇÃO E NORMALIZAÇÃO ---
     // 1. Normaliza o que o usuário mandou (AGUA -> AGUA)
     const guessClean = guess.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
 

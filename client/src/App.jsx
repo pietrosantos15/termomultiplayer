@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import "./App.css";
+import { FaLinkedin } from "react-icons/fa";
 
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect("https://servertermomultiplayer.onrender.com/");
 
 const KEYBOARD_KEYS = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -143,14 +144,38 @@ function App() {
   if (!isInGame) {
     return (
       <div className="container">
-        <h1>TERMO RUSH ⚡</h1>
+        <h1>TERMO MULTIPLAYER</h1>
         <div className="login-box">
             <input className="login-input" placeholder="Seu Apelido" value={nickname} onChange={handleNicknameChange} />
+            
             <button onClick={createRoom}>CRIAR SALA</button>
+            
             <div className="join-area">
                 <input className="login-input" placeholder="Código da Sala" value={roomCode} onChange={(e) => setRoomCode(e.target.value)} />
-                <button onClick={() => handleJoin(roomCode, nickname)}>ENTRAR</button>
+                <button onClick={() => handleJoin(roomCode, nickname)}>ENTRAR</button> <br />
             </div>
+            
+            <h3>Feito por: Pietro Santos</h3>
+            
+            <a 
+              href="https://www.linkedin.com/in/pietro-santos-609a11315/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{    
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                gap: '8px', 
+                textDecoration: 'none', 
+                marginTop: '15px',
+                cursor: 'pointer'
+              }}
+            >
+              <span style={{ color: 'white', fontSize: '16px' }}>Entre em contato:</span>
+              <FaLinkedin size={30} color="#0077b5" />
+            </a>
+            {/* ------------------------------------- */}
+
         </div>
       </div>
     );

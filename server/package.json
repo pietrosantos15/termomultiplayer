@@ -13,6 +13,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "react-icons": "^5.5.0",
     "socket.io": "^4.8.1"
   }
 }
