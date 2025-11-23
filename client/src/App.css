@@ -1,36 +1,103 @@
-body {
-  background-color: #121213;
-  color: white;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* =========================================
+   RESET & GERAL
+   ========================================= */
+:root {
+  --bg-color: #121213;
+  --bg-secondary: #212123; /* Cor dos cards/inputs */
+  --text-color: #ffffff;
+  --border-color: #3a3a3c;
+  --key-bg: #818384;
+  
+  /* Cores do Jogo */
+  --correct-color: #538d4e;  /* Verde */
+  --present-color: #b59f3b;  /* Amarelo */
+  --absent-color: #3a3a3c;   /* Cinza Escuro */
+  --active-border: #565758;
+}
+
+* {
+  box-sizing: border-box;
   margin: 0;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  overflow-y: auto;
+  padding: 0;
 }
 
-.container {
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
   text-align: center;
-  margin-top: 50px;
-  width: 100%;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
-.game-container {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  padding: 20px;
-  justify-content: center;
-  width: 100%;
-  max-width: 1000px;
+button {
+  cursor: pointer;
+  font-weight: bold;
+  border: none;
+  outline: none;
+  transition: all 0.2s;
 }
 
-/* TELA DE LOGIN & LOBBY */
-.login-box {
+/* =========================================
+   TELA DE LOGIN / LOBBY
+   ========================================= */
+.container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+  padding: 20px;
+}
+
+.login-box {
+  background-color: var(--bg-secondary);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
   gap: 15px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-input {
+  background-color: transparent;
+  border: 2px solid var(--border-color);
+  color: white;
+  padding: 12px;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  text-align: center;
+  transition: border-color 0.3s;
+}
+
+.login-input:focus {
+  border-color: var(--present-color);
+}
+
+.login-box button {
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: var(--correct-color);
+  color: white;
+  text-transform: uppercase;
+}
+
+.login-box button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
 }
 
 .join-area {
@@ -39,100 +106,95 @@ body {
   margin-top: 10px;
 }
 
-input.login-input {
-  padding: 15px;
-  font-size: 18px;
-  border-radius: 5px;
-  border: none;
-  text-align: center;
-  outline: none;
+.join-area .login-input {
+  flex: 1;
 }
 
 .lobby-list ul {
   list-style: none;
-  padding: 0;
-  font-size: 20px;
+  background: var(--bg-color);
+  padding: 1rem;
+  border-radius: 8px;
 }
 
 .lobby-list li {
-  margin: 10px 0;
-  background: #2c2c2e;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-.start-btn {
-  background-color: #538d4e;
-  color: white;
-  font-size: 24px;
-  padding: 15px 40px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 20px;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-.blink {
-  animation: blinker 1.5s linear infinite;
-  color: #d3ad69;
-  font-weight: bold;
-}
-
-@keyframes blinker {
-  50% { opacity: 0; }
-}
-
-/* BARRA LATERAL (RANKING E TIMER) */
-.sidebar {
-  background: #1e1e1e;
-  padding: 20px;
-  border-radius: 8px;
-  width: 220px;
-  border: 1px solid #333;
-  height: fit-content;
-}
-
-.timer-box {
-  font-size: 32px;
-  font-weight: bold;
-  color: #d3ad69;
-  border-bottom: 2px solid #333;
-  padding-bottom: 15px;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar li {
   padding: 8px 0;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
 }
 
-/* TABULEIRO (BOARD) */
+/* =========================================
+   LAYOUT DO JOGO
+   ========================================= */
+.game-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px;
+  gap: 20px;
+}
+
+/* Sidebar Lateral (Ranking e Timer) */
+.sidebar {
+  flex: 1;
+  background-color: var(--bg-secondary);
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  max-width: 250px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.timer-box {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: bold;
+  background: rgba(0,0,0,0.2);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.sidebar ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: var(--bg-color);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+/* Área Central (Tabuleiro e Teclado) */
 .center-area {
+  flex: 3;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 20px;
 }
 
+/* =========================================
+   TABULEIRO (BOARD)
+   ========================================= */
 .board {
   display: grid;
   grid-template-rows: repeat(6, 1fr);
   gap: 5px;
-  margin-bottom: 20px;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
 .row {
@@ -142,35 +204,60 @@ input.login-input {
 }
 
 .tile {
-  width: 50px;
-  height: 50px;
-  border: 2px solid #3a3a3c;
+  width: 60px;
+  height: 60px;
+  border: 2px solid var(--border-color);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 28px;
+  font-size: 2rem;
   font-weight: bold;
   text-transform: uppercase;
+  user-select: none;
+  transition: transform 0.1s, border-color 0.1s;
 }
 
-/* CORES DO JOGO */
-.green { background-color: #538d4e; border-color: #538d4e; }
-.yellow { background-color: #b59f3b; border-color: #b59f3b; }
-.gray { background-color: #3a3a3c; border-color: #3a3a3c; }
-.empty { border-color: #3a3a3c; }
-.active-tile { border-color: #818384; }
+/* Letra preenchida mas não enviada */
+.tile.active-tile {
+  border-color: var(--active-border);
+  animation: pop 0.1s ease-in-out;
+}
 
-/* TECLADO VIRTUAL */
+/* Cursor da letra atual */
+.tile.selected-cursor {
+  border-bottom: 4px solid var(--present-color);
+}
+
+/* Cores Finais */
+.tile.green {
+  background-color: var(--correct-color);
+  border-color: var(--correct-color);
+}
+
+.tile.yellow {
+  background-color: var(--present-color);
+  border-color: var(--present-color);
+}
+
+.tile.gray {
+  background-color: var(--absent-color);
+  border-color: var(--absent-color);
+}
+
+/* =========================================
+   TECLADO
+   ========================================= */
 .keyboard {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  align-items: center;
-  margin-top: 10px;
+  width: 100%;
+  max-width: 500px;
 }
 
 .keyboard-row {
   display: flex;
+  justify-content: center;
   gap: 6px;
 }
 
@@ -180,84 +267,62 @@ input.login-input {
   border: 0;
   padding: 0;
   margin: 0;
-  height: 50px;
+  height: 58px;
   border-radius: 4px;
   cursor: pointer;
   user-select: none;
-  background-color: #818384;
+  background-color: var(--key-bg);
   color: white;
-  width: 40px;
-  font-size: 14px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: uppercase;
+  font-size: 1.2rem; /* Letras maiores */
 }
 
-.big-key {
-  width: 65px;
-  font-size: 12px;
+.key-btn.big-key {
+  flex: 1.5;
+  font-size: 0.9rem; /* Enter/Del menores */
 }
 
-.green-key { background-color: #538d4e; }
-.yellow-key { background-color: #b59f3b; }
-.gray-key { background-color: #3a3a3c; opacity: 0.5; }
+.key-btn.green-key { background-color: var(--correct-color); }
+.key-btn.yellow-key { background-color: var(--present-color); }
+.key-btn.gray-key { background-color: var(--absent-color); }
 
-button:hover {
-  opacity: 0.9;
+.key-btn:active {
+  transform: scale(0.95);
 }
 
-/* --- NOTIFICAÇÃO RÁPIDA (TOAST) --- */
-/* Essa parte controla a velocidade da mensagem de acerto */
+/* =========================================
+   ANIMAÇÕES E EXTRAS
+   ========================================= */
 .toast-overlay {
-  position: absolute;
-  top: 20%;
+  position: fixed;
+  top: 10%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.9);
-  color: #fff;
-  padding: 15px 30px;
-  border-radius: 10px;
-  font-size: 24px;
+  background-color: white;
+  color: black;
+  padding: 15px 25px;
+  border-radius: 5px;
   font-weight: bold;
-  border: 2px solid #d3ad69;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   z-index: 1000;
-  
-  /* Animação acelerada: entra em 0.2s, espera um pouco e some */
-  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.2s 0.6s forwards; 
-  
-  pointer-events: none;
-  text-align: center;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-  white-space: nowrap;
+  animation: fadeIn 0.3s ease;
 }
 
-@keyframes popIn {
-  from { transform: translateX(-50%) scale(0.5); opacity: 0; }
-  to { transform: translateX(-50%) scale(1); opacity: 1; }
+.blink {
+  animation: blinker 1.5s linear infinite;
 }
 
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+@keyframes blinker {
+  50% { opacity: 0; }
 }
 
-/* TELA DE RESULTADO FINAL */
-.result-screen {
-  margin-bottom: 20px;
-  padding: 20px;
-  background: #2c2c2e;
-  border-radius: 10px;
-  border: 1px solid #538d4e;
-}
-
-.result-screen h2 {
-  color: #d3ad69;
-  margin: 0 0 10px 0;
-  font-size: 28px;
-}
-
-/* MANTENHA TODO O CSS ANTERIOR E ADICIONE ISSO NO FINAL: */
-
-/* Animação de Erro (Tremer a linha) */
-.shake {
-  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+@keyframes pop {
+  0% { transform: scale(0.8); }
+  100% { transform: scale(1); }
 }
 
 @keyframes shake {
@@ -265,4 +330,69 @@ button:hover {
   20%, 80% { transform: translate3d(2px, 0, 0); }
   30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
   40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+.shake {
+  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* =========================================
+   RESPONSIVIDADE (CELULAR)
+   ========================================= */
+@media (max-width: 768px) {
+  .game-container {
+    flex-direction: column;
+    padding: 5px;
+  }
+
+  .sidebar {
+    width: 100%;
+    max-width: none;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    order: 1; /* Jogar sidebar pro topo ou fundo se quiser */
+  }
+  
+  .sidebar ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .sidebar li {
+    font-size: 0.8rem;
+    padding: 5px 8px;
+  }
+
+  .timer-box {
+    margin-bottom: 0;
+    font-size: 1.2rem;
+  }
+
+  .center-area {
+    order: 2;
+    justify-content: flex-start;
+  }
+
+  .board {
+    gap: 3px;
+  }
+
+  .tile {
+    width: 52px;
+    height: 52px;
+    font-size: 1.8rem;
+  }
+
+  .key-btn {
+    height: 50px;
+    font-size: 1rem;
+  }
 }

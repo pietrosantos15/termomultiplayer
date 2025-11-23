@@ -17,7 +17,7 @@ function App() {
   const [nickname, setNickname] = useState("");
   const [roomCode, setRoomCode] = useState("");
   
-  // ARRAY DE 5 POSIÇÕES (GARANTE QUE AS LETRAS NÃO ESCORREGUEM)
+  // ARRAY DE 5 POSIÇÕES
   const [currentGuess, setCurrentGuess] = useState(Array(5).fill(""));
   const [activeTileIndex, setActiveTileIndex] = useState(0);
   
@@ -34,6 +34,10 @@ function App() {
   const nicknameRef = useRef("");
   const roomDataRef = useRef(null);
 
+  // --- Verifica se o jogador atual já ganhou a rodada ---
+  const isWinner = myGuesses.length > 0 && 
+                   myGuesses[myGuesses.length - 1].colors.every(c => c === 'green');
+
   useEffect(() => {
       roomDataRef.current = roomData;
   }, [roomData]);
@@ -44,7 +48,7 @@ function App() {
   };
 
   const handleInputChar = (char) => {
-      if (activeTileIndex > 4) return;
+      if (activeTileIndex > 4 || isWinner || isRoundEliminated) return;
       
       const newGuess = [...currentGuess];
       newGuess[activeTileIndex] = char;
@@ -56,6 +60,8 @@ function App() {
   };
 
   const handleBackspace = () => {
+      if (isWinner || isRoundEliminated) return;
+
       const newGuess = [...currentGuess];
       if (newGuess[activeTileIndex] !== "") {
           newGuess[activeTileIndex] = "";
@@ -69,6 +75,8 @@ function App() {
   };
 
   const handleEnter = () => { 
+      if (isWinner || isRoundEliminated) return;
+
       const word = currentGuess.join("");
       if (word.length === 5 && !currentGuess.includes("")) {
           socket.emit("submit_guess", { roomId: roomDataRef.current?.id, guess: word }); 
@@ -77,6 +85,11 @@ function App() {
           setShakeRow(true);
           setTimeout(() => setShakeRow(false), 500);
       }
+  };
+
+  // --- Função para sair da sala e voltar ao início ---
+  const handleExit = () => {
+      window.location.reload(); 
   };
 
   useEffect(() => {
@@ -94,19 +107,15 @@ function App() {
       setActiveTileIndex(0);
     });
 
-    // --- CORREÇÃO DO ALERTA DE VITÓRIA ---
     socket.on("round_winner_alert", (data) => {
-        // Debug para ver o que chegou no console do navegador (F12)
-        console.log("Dados da vitória recebidos:", data); 
-        
         const winnerName = data.winner;
-        const secretWord = data.word; // A palavra que o servidor enviou
+        const secretWord = data.word; 
 
+        // --- ALTERADO: Tempo reduzido de 4000 para 1500ms ---
         if (secretWord) {
-            showToast(`🔔 ${winnerName} ACERTOU! A palavra era: ${secretWord}`, 4000);
+            showToast(`🔔 ${winnerName} ACERTOU! A palavra era: ${secretWord}`, 1500);
         } else {
-            // Fallback caso o servidor falhe em enviar a palavra
-            showToast(`🔔 ${winnerName} ACERTOU!`, 4000);
+            showToast(`🔔 ${winnerName} ACERTOU!`, 1500);
         }
     });
 
@@ -163,7 +172,8 @@ function App() {
 
   useEffect(() => {
     const handleGlobalKeyDown = (e) => {
-        if (!isInGame || statusMessage || isRoundEliminated || roomDataRef.current?.status !== 'playing') return;
+        if (!isInGame || statusMessage || isRoundEliminated || isWinner || roomDataRef.current?.status !== 'playing') return;
+        
         const key = e.key.toUpperCase();
         
         if (key === 'BACKSPACE') handleBackspace();
@@ -176,7 +186,7 @@ function App() {
     };
     window.addEventListener('keydown', handleGlobalKeyDown);
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
-  }, [isInGame, statusMessage, isRoundEliminated, currentGuess, activeTileIndex]);
+  }, [isInGame, statusMessage, isRoundEliminated, isWinner, currentGuess, activeTileIndex]);
 
   const handleNicknameChange = (e) => { setNickname(e.target.value); nicknameRef.current = e.target.value; };
   const createRoom = () => { if (!nickname) return alert("Digite um nick!"); socket.emit("create_room", nickname); };
@@ -253,7 +263,17 @@ function App() {
                     ))}
                   </ul>
               </div>
-              {roomData.status === 'waiting' && (isHost ? <button className="start-btn" onClick={startGame}>NOVA PARTIDA</button> : <p className="blink">Aguardando anfitrião...</p>)}
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
+                {roomData.status === 'waiting' && (isHost ? <button className="start-btn" onClick={startGame}>NOVA PARTIDA</button> : <p className="blink">Aguardando anfitrião...</p>)}
+                
+                <button 
+                    onClick={handleExit} 
+                    style={{ backgroundColor: '#d9534f', color: 'white' }}
+                >
+                    SAIR DA SALA
+                </button>
+              </div>
           </div>
       );
   }
@@ -265,6 +285,22 @@ function App() {
         <div className="timer-box" style={{color: timeLeft < 10 ? 'red' : '#d3ad69'}}>⏰ {timeLeft}s</div>
         <h3>Ranking</h3>
         <ul>{roomData?.players.sort((a, b) => b.score - a.score).map(p => <li key={p.id} style={{border: p.id===socket.id?'1px solid #d3ad69':'none'}}><span>{p.nickname}</span><strong>{p.score}</strong></li>)}</ul>
+        
+        <div style={{marginTop: '20px'}}>
+            <button 
+                onClick={handleExit} 
+                style={{ 
+                    width: '100%', 
+                    backgroundColor: '#d9534f', 
+                    color: 'white',
+                    padding: '8px',
+                    fontSize: '0.8rem'
+                }}
+            >
+                SAIR DA SALA
+            </button>
+        </div>
+
       </div>
       <div className="center-area">
         <div className="board">
@@ -275,7 +311,7 @@ function App() {
               if (guessData) {
                   return <div key={rowIndex} className="row">{guessData.word.split('').map((l, i) => <div key={i} className={`tile ${guessData.colors[i]}`}>{l}</div>)}</div>;
               } 
-              else if (isCurrentRow && !isRoundEliminated && !statusMessage) {
+              else if (isCurrentRow && !isRoundEliminated && !statusMessage && !isWinner) {
                   const rowClass = shakeRow ? "row current-row shake" : "row current-row";
                   return (
                     <div key={rowIndex} className={rowClass}>
@@ -306,6 +342,8 @@ function App() {
                             key={key} 
                             className={`key-btn ${getKeyColor(key)}`} 
                             onClick={() => handleInputChar(key)}
+                            disabled={isWinner}
+                            style={{ opacity: isWinner ? 0.5 : 1 }}
                         >
                             {key}
                         </button>
@@ -313,8 +351,8 @@ function App() {
                 </div>
             ))}
             <div className="keyboard-row">
-                <button className="key-btn big-key" onClick={handleEnter}>ENTER</button>
-                <button className="key-btn big-key" onClick={handleBackspace}>⌫</button>
+                <button className="key-btn big-key" onClick={handleEnter} disabled={isWinner}>ENTER</button>
+                <button className="key-btn big-key" onClick={handleBackspace} disabled={isWinner}>⌫</button>
             </div>
         </div>
       </div>

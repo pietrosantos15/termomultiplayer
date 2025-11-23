@@ -92,7 +92,6 @@ const finishGame = (roomId, io) => {
 
     let resultData = {};
     
-    // --- AQUI: GARANTE QUE A PALAVRA É ENVIADA NO FIM DO JOGO ---
     if (winners.length === 0) {
         resultData = { type: 'fail', message: 'Ninguém pontuou!', word: room.word };
     } else if (winners.length === 1) {
@@ -103,7 +102,9 @@ const finishGame = (roomId, io) => {
     }
 
     io.to(roomId).emit("game_over", resultData);
-    setTimeout(() => returnToLobby(roomId, io), 4000);
+    
+    // --- ALTERADO: Reduzido de 4000 para 500ms para voltar mais rápido ---
+    setTimeout(() => returnToLobby(roomId, io), 500);
 };
 
 const returnToLobby = (roomId, io) => {
@@ -213,8 +214,11 @@ io.on("connection", (socket) => {
     player.attempts += 1;
 
     const feedback = [];
-    const secretArr = secretWord.split('');
-    const guessArr = guessFormatted.split('');
+    
+    const secretClean = secretWord.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+    
+    const secretArr = secretClean.split(''); 
+    const guessArr = guessClean.split('');   
 
     for (let i = 0; i < 5; i++) {
         if (guessArr[i] === secretArr[i]) {
@@ -237,21 +241,16 @@ io.on("connection", (socket) => {
 
     player.guesses.push({ word: guessFormatted, colors: feedback });
 
-    // --- VERIFICAÇÃO DE VITÓRIA ---
-    if (guessFormatted === secretWord) { 
-        console.log(`🏆 VENCEDOR DETECTADO: ${player.nickname} acertou a palavra: ${secretWord}`); // LOG PARA DEBUG
-        
+    if (guessClean === secretClean) { 
         room.status = 'resetting'; 
         player.score += 1;
 
         socket.emit("guess_feedback", player.guesses);
-        
-        // MANDA A PALAVRA AQUI
         io.to(roomId).emit("round_winner_alert", { winner: player.nickname, word: secretWord });
 
         setTimeout(() => {
             forceNextWord(room, io);
-        }, 3000);
+        }, 1000);
         return;
     }
 
@@ -271,7 +270,6 @@ io.on("connection", (socket) => {
   });
   
   socket.on("disconnect", () => {
-      // Lógica de desconexão
   });
 });
 

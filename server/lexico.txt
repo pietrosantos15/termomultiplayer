@@ -24039,7 +24039,6 @@ blasonador
 blasonar
 blasonaria
 blasônico
-blast
 blastema
 blastemático
 blasto
