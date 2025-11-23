@@ -534,3 +534,85 @@ button {
   color: #818384;
   font-style: italic;
 }
+
+@media (max-width: 768px) {
+  .game-container {
+    flex-direction: column; /* Muda para vertical */
+    padding: 5px;
+    gap: 10px;
+    max-width: 100%;
+  }
+
+  /* Sidebar vira uma barra horizontal no topo */
+  .sidebar {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 0 0 12px 12px;
+    flex: none; /* Altura fixa baseada no conteúdo */
+    margin-bottom: 5px;
+  }
+
+  .timer-box {
+    font-size: 1.2rem;
+    margin: 0;
+    padding: 5px 10px;
+    min-width: 80px;
+  }
+
+  .sidebar h3 { display: none; } /* Remove título 'Ranking' para economizar espaço */
+  
+  .sidebar ul {
+    flex-direction: row;
+    gap: 10px;
+    overflow-x: auto; /* Scroll horizontal nos nomes */
+    max-width: 50%; /* Deixa espaço pro timer e botão */
+    padding-bottom: 2px;
+  }
+  
+  .sidebar li {
+    border: none;
+    padding: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .center-area {
+    justify-content: flex-end; /* Empurra o teclado para baixo */
+    padding-bottom: 5px;
+    gap: 10px;
+  }
+
+  .board {
+    /* Ajuste fino para não esmagar o teclado */
+    max-height: calc(100dvh - 260px); 
+    max-width: 100%;
+    padding: 0 10px;
+  }
+
+  .tile {
+    font-size: 1.8rem;
+    border-width: 2px;
+  }
+
+  .keyboard {
+    gap: 4px;
+    padding: 0 2px;
+  }
+
+  .key-btn {
+    height: 48px; /* Teclas um pouco menores no celular */
+    font-size: 0.9rem;
+    border-radius: 3px;
+  }
+  
+  .toast-overlay {
+      top: 50%; /* Centraliza toast no celular */
+  }
+}
