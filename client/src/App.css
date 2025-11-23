@@ -535,84 +535,90 @@ button {
   font-style: italic;
 }
 
+
 @media (max-width: 768px) {
+  body {
+    height: 100dvh;
+    overflow: hidden;
+    display: block;
+  }
+
+  /* --- CORREÇÃO 1: LOGIN/ENTRAR --- */
+  .container { padding: 10px; height: 100%; overflow-y: auto; }
+  
+  .join-area {
+      flex-direction: column; /* Coloca Input em cima e Botão em baixo */
+      gap: 15px;
+      width: 100%;
+  }
+  
+  .join-area .login-input {
+      width: 100%; /* Garante largura total */
+  }
+  
+  .join-area button {
+      width: 100%; /* Garante largura total */
+      margin: 0;
+  }
+
+  /* Layout do Jogo */
   .game-container {
-    flex-direction: column; /* Muda para vertical */
-    padding: 5px;
-    gap: 10px;
-    max-width: 100%;
+    flex-direction: column;
+    padding: 0; margin: 0; width: 100%; height: 100dvh;
+    gap: 0; justify-content: flex-start;
   }
 
-  /* Sidebar vira uma barra horizontal no topo */
   .sidebar {
-    width: 100%;
-    max-width: none;
-    min-width: 0;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px;
-    border-radius: 0 0 12px 12px;
-    flex: none; /* Altura fixa baseada no conteúdo */
-    margin-bottom: 5px;
+    width: 100%; max-width: none; height: 60px;
+    flex-direction: row; align-items: center; justify-content: space-between;
+    padding: 0 10px; margin: 0; border-radius: 0; border-bottom: 1px solid #333;
+    flex: none; order: -1;
   }
 
-  .timer-box {
-    font-size: 1.2rem;
-    margin: 0;
-    padding: 5px 10px;
-    min-width: 80px;
-  }
+  .sidebar h3 { display: none; }
+  .timer-box { margin: 0; padding: 5px; font-size: 1.2rem; background: transparent; }
 
-  .sidebar h3 { display: none; } /* Remove título 'Ranking' para economizar espaço */
-  
   .sidebar ul {
-    flex-direction: row;
-    gap: 10px;
-    overflow-x: auto; /* Scroll horizontal nos nomes */
-    max-width: 50%; /* Deixa espaço pro timer e botão */
-    padding-bottom: 2px;
+    flex-direction: row; gap: 8px; overflow-x: auto;
+    max-width: 55%; display: flex; padding-bottom: 0;
   }
-  
+
   .sidebar li {
-    border: none;
-    padding: 0;
-    background: rgba(255,255,255,0.1);
-    padding: 4px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
+    padding: 4px 10px; font-size: 0.85rem; border: none;
+    white-space: nowrap; background: rgba(255,255,255,0.15);
+    gap: 8px; display: flex; align-items: center;
   }
 
-  .center-area {
-    justify-content: flex-end; /* Empurra o teclado para baixo */
-    padding-bottom: 5px;
-    gap: 10px;
+  .sidebar li strong {
+      margin-left: 0; font-size: 0.9rem;
+      background: rgba(0,0,0,0.5); padding: 1px 6px; min-width: auto;
   }
 
+  .sidebar button { padding: 6px 10px !important; font-size: 0.7rem !important; width: auto !important; }
+  .sidebar > div { margin-top: 0 !important; }
+
+  .center-area { width: 100%; flex: 1; justify-content: space-between; padding: 5px 0; gap: 0; }
+
+  /* --- CORREÇÃO 2: TECLADO CORTADO --- */
   .board {
-    /* Ajuste fino para não esmagar o teclado */
-    max-height: calc(100dvh - 260px); 
-    max-width: 100%;
-    padding: 0 10px;
+    width: 100%; max-width: 360px; aspect-ratio: 5 / 6;
+    /* Diminuí a altura do board para sobrar espaço pro teclado */
+    max-height: calc(100dvh - 280px); 
+    margin: 0 auto; padding: 0 5px;
   }
 
-  .tile {
-    font-size: 1.8rem;
-    border-width: 2px;
-  }
+  .tile { width: 100%; height: 100%; font-size: 1.6rem; border-width: 2px; }
 
-  .keyboard {
-    gap: 4px;
-    padding: 0 2px;
-  }
-
-  .key-btn {
-    height: 48px; /* Teclas um pouco menores no celular */
-    font-size: 0.9rem;
-    border-radius: 3px;
+  .keyboard { 
+      width: 100%; 
+      padding: 0 5px 15px 5px; /* Mais espaço em baixo (15px) */
+      gap: 4px; 
+      background-color: var(--bg-color); 
   }
   
-  .toast-overlay {
-      top: 50%; /* Centraliza toast no celular */
-  }
+  .keyboard-row { gap: 3px; }
+  .key-btn { height: 45px; font-size: 0.95rem; border-radius: 4px; } /* Teclas levemente menores */
+  .key-btn.big-key { font-size: 0.75rem; flex: 1.2; }
+  
+  .toast-overlay { top: 50%; width: 85%; }
 }
