@@ -5,18 +5,14 @@ const cors = require('cors');
 const fs = require('fs');
 
 // --- CARREGAMENTO INTELIGENTE DOS DICIONÁRIOS ---
-let bancoRespostas = []; // Só palavras comuns para sortear
-const mapaValidacao = new Map(); // Mapa para validar tudo e corrigir acentos
+let bancoRespostas = []; 
+const mapaValidacao = new Map(); 
 
 try {
     console.log("🔄 Carregando dicionários...");
-    
-    // Carrega os arquivos gerados pelo script 'gerar_bancos.js'
     const completo = require('./banco_completo.json');
     bancoRespostas = require('./banco_respostas.json');
     
-    // Cria o Mapa: Chave SEM ACENTO -> Valor COM ACENTO
-    // Ex: "AGUA" -> "ÁGUA"
     completo.forEach(palavra => {
         const chave = palavra.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
         mapaValidacao.set(chave, palavra);
@@ -24,9 +20,7 @@ try {
     
     console.log(`✅ Dicionários carregados! Sorteio: ${bancoRespostas.length} | Validação: ${mapaValidacao.size}`);
 } catch (e) {
-    console.error("❌ ERRO CRÍTICO: Arquivos 'banco_completo.json' ou 'banco_respostas.json' não encontrados.");
-    console.error("Rode 'node gerar_bancos.js' antes de iniciar o servidor.");
-    // Fallback de emergência
+    console.error("❌ ERRO: Dicionários não encontrados. Usando fallback.");
     bancoRespostas = ["TERMO", "NOBRE", "VAZIO", "HONRA", "SENHA", "AMIGO", "TEMPO", "CHUVA"];
     bancoRespostas.forEach(w => mapaValidacao.set(w, w));
 }
@@ -34,11 +28,9 @@ try {
 const app = express();
 app.use(cors());
 
-// --- MUDANÇA AQUI: ROTA PADRÃO PARA O RENDER NÃO DAR ERRO ---
 app.get("/", (req, res) => {
     res.send("Servidor rodando! 🚀");
 });
-// ------------------------------------------------------------
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -47,24 +39,19 @@ const io = new Server(server, {
 
 const rooms = {};
 const roomTimers = {}; 
-const ROUND_TIME = 60; // Tempo da partida em segundos
+const ROUND_TIME = 60; 
 
 const generateRoomCode = () => Math.random().toString(36).substring(2, 8).toUpperCase();
 
-// --- SORTEIO USA APENAS O BANCO DE RESPOSTAS ---
 const getNewWord = (oldWord) => {
     if (bancoRespostas.length === 0) return "TERMO";
-    
     let newWord = bancoRespostas[Math.floor(Math.random() * bancoRespostas.length)];
-    
-    // Tenta não repetir a palavra imediatamente anterior
     while (newWord === oldWord && bancoRespostas.length > 1) {
         newWord = bancoRespostas[Math.floor(Math.random() * bancoRespostas.length)];
     }
-    return newWord; // Retorna a palavra já com acento (ex: "ÁGUA")
+    return newWord; 
 };
 
-// --- CONTROLE DE TEMPO ---
 const stopTimer = (roomId) => {
     if (roomTimers[roomId]) {
         clearInterval(roomTimers[roomId]);
@@ -81,12 +68,14 @@ const startRoomTimer = (roomId, io) => {
 
     roomTimers[roomId] = setInterval(() => {
         if (!rooms[roomId]) return stopTimer(roomId);
+        
+        if (rooms[roomId].status === 'playing') {
+            rooms[roomId].timeLeft -= 1;
+            io.to(roomId).emit("timer_update", rooms[roomId].timeLeft);
 
-        rooms[roomId].timeLeft -= 1;
-        io.to(roomId).emit("timer_update", rooms[roomId].timeLeft);
-
-        if (rooms[roomId].timeLeft <= 0) {
-            finishGame(roomId, io);
+            if (rooms[roomId].timeLeft <= 0) {
+                finishGame(roomId, io);
+            }
         }
     }, 1000);
 };
@@ -102,17 +91,18 @@ const finishGame = (roomId, io) => {
     const winners = room.players.filter(p => p.score === maxScore && p.score > 0);
 
     let resultData = {};
+    
+    // --- AQUI: GARANTE QUE A PALAVRA É ENVIADA NO FIM DO JOGO ---
     if (winners.length === 0) {
-        resultData = { type: 'fail', message: 'Ninguém pontuou!' };
+        resultData = { type: 'fail', message: 'Ninguém pontuou!', word: room.word };
     } else if (winners.length === 1) {
-        resultData = { type: 'win', winner: winners[0].nickname, score: maxScore };
+        resultData = { type: 'win', winner: winners[0].nickname, score: maxScore, word: room.word };
     } else {
         const names = winners.map(w => w.nickname).join(", ");
-        resultData = { type: 'draw', winners: names, score: maxScore };
+        resultData = { type: 'draw', winners: names, score: maxScore, word: room.word };
     }
 
     io.to(roomId).emit("game_over", resultData);
-
     setTimeout(() => returnToLobby(roomId, io), 4000);
 };
 
@@ -136,6 +126,7 @@ const returnToLobby = (roomId, io) => {
 
 const forceNextWord = (room, io) => {
     room.word = getNewWord(room.word); 
+    room.status = 'playing'; 
     
     room.players.forEach(p => {
         p.attempts = 0;
@@ -207,32 +198,24 @@ io.on("connection", (socket) => {
     const room = rooms[roomId];
     if (!room || room.status !== 'playing') return;
 
-    // --- VALIDAÇÃO E NORMALIZAÇÃO ---
-    // 1. Normaliza o que o usuário mandou (AGUA -> AGUA)
     const guessClean = guess.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
 
-    // 2. Verifica se existe no mapa de validação
     if (!mapaValidacao.has(guessClean)) {
         socket.emit("invalid_word_alert", "Palavra desconhecida!");
         return;
     }
 
-    // 3. Recupera a palavra formatada (AGUA -> ÁGUA)
-    // Isso garante que a comparação de cores funcione se a palavra secreta tiver acento
     const guessFormatted = mapaValidacao.get(guessClean);
-
     const player = room.players.find(p => p.id === socket.id);
     if (!player || player.eliminated) return;
 
-    const secretWord = room.word; // Palavra secreta (já tem acento, ex: ÁGUA)
+    const secretWord = room.word; 
     player.attempts += 1;
 
-    // Lógica de Cores (Termo) - Agora compara (ÁGUA vs ÁGUA)
     const feedback = [];
     const secretArr = secretWord.split('');
-    const guessArr = guessFormatted.split(''); // Usa a formatada
+    const guessArr = guessFormatted.split('');
 
-    // Verde (Posição correta)
     for (let i = 0; i < 5; i++) {
         if (guessArr[i] === secretArr[i]) {
             feedback[i] = "green";
@@ -240,8 +223,6 @@ io.on("connection", (socket) => {
             guessArr[i] = null;
         }
     }
-    
-    // Amarelo (Letra errada)
     for (let i = 0; i < 5; i++) {
         if (guessArr[i]) { 
             const indexInSecret = secretArr.indexOf(guessArr[i]);
@@ -254,24 +235,31 @@ io.on("connection", (socket) => {
         }
     }
 
-    // Salva a tentativa usando a palavra bonita (com acento)
     player.guesses.push({ word: guessFormatted, colors: feedback });
 
-    // VERIFICAÇÃO DE VITÓRIA (Compara Strings com acento)
+    // --- VERIFICAÇÃO DE VITÓRIA ---
     if (guessFormatted === secretWord) { 
+        console.log(`🏆 VENCEDOR DETECTADO: ${player.nickname} acertou a palavra: ${secretWord}`); // LOG PARA DEBUG
+        
+        room.status = 'resetting'; 
         player.score += 1;
-        io.to(roomId).emit("round_winner_alert", { winner: player.nickname });
-        forceNextWord(room, io);
+
+        socket.emit("guess_feedback", player.guesses);
+        
+        // MANDA A PALAVRA AQUI
+        io.to(roomId).emit("round_winner_alert", { winner: player.nickname, word: secretWord });
+
+        setTimeout(() => {
+            forceNextWord(room, io);
+        }, 3000);
         return;
     }
 
-    // VERIFICAÇÃO DE DERROTA
     if (player.attempts >= 6) {
         player.eliminated = true;
         socket.emit("eliminated_round");
     }
 
-    // VERIFICA SE TODOS PERDERAM
     const activePlayers = room.players.filter(p => !p.eliminated);
     if (activePlayers.length === 0) {
         io.to(roomId).emit("word_skipped_alert", `Ninguém acertou! A palavra era: ${secretWord}`);

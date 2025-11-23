@@ -1,68 +1,151 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
+.game-container {
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.sidebar {
+  width: 200px;
+  background: #2c2c2c;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: left;
+}
+.sidebar h3 { margin-top: 0; color: #d3ad69; }
+.sidebar ul { list-style: none; padding: 0; }
+.sidebar li { 
+  display: flex; 
+  justify-content: space-between; 
+  padding: 5px; 
+  border-bottom: 1px solid #444; 
+}
+.timer-box {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 20px;
+}
+.row {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+}
+.tile {
+  width: 50px;
+  height: 50px;
+  border: 2px solid #3a3a3c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  text-transform: uppercase;
+  /* IMPORTANTE: Evita que bordas mudem o tamanho do elemento */
+  box-sizing: border-box;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* Cores do Termo */
+.tile.green { background-color: #538d4e; border-color: #538d4e; }
+.tile.yellow { background-color: #b59f3b; border-color: #b59f3b; }
+.tile.gray { background-color: #3a3a3c; border-color: #3a3a3c; }
+.tile.active-tile { border-color: #565758; animation: pop 0.1s; }
+
+/* EFEITO DE CURSOR SEM PULAR LAYOUT */
+.tile.selected-cursor {
+  box-shadow: inset 0px -4px 0px 0px #d3ad69; /* Linha interna em vez de borda */
+  border-color: #d3ad69;
 }
+
+/* Animação de erro */
+.shake { animation: shake 0.5s; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Teclado */
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.keyboard-row {
+  display: flex;
+  gap: 6px;
+}
+.key-btn {
+  padding: 15px 10px;
+  border-radius: 4px;
+  border: none;
+  background: #818384;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  min-width: 40px;
+}
+.key-btn.big-key { min-width: 65px; }
+.key-btn:hover { opacity: 0.9; }
+
+.green-key { background-color: #538d4e; }
+.yellow-key { background-color: #b59f3b; }
+.gray-key { background-color: #3a3a3c; }
+
+/* Toast Notification */
+.toast-overlay {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 1000;
+  font-weight: bold;
+  border: 1px solid #555;
+  animation: slideDown 0.3s ease-out;
+}
+@keyframes slideDown {
+  from { top: -50px; opacity: 0; }
+  to { top: 20px; opacity: 1; }
+}
+
+.login-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+.login-input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+.result-screen {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+}
+.blink { animation: blinker 1.5s linear infinite; }
+@keyframes blinker { 50% { opacity: 0; } }
