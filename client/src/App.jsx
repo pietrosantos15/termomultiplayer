@@ -4,7 +4,7 @@ import "./App.css";
 import { FaLinkedin } from "react-icons/fa";
 
 // SE ESTIVER RODANDO LOCALMENTE, USE "http://localhost:3001"
-const socket = io.connect("https://servertermomultiplayer.onrender.com/");
+const socket = io.connect("http://localhost:3001");
 
 const KEYBOARD_KEYS = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -251,28 +251,41 @@ function App() {
       const isHost = roomData.host === socket.id;
       return (
           <div className="container">
-              {roomData.status === 'finished' && <div className="result-screen"><h2>{statusMessage}</h2><p>Reiniciando...</p></div>}
-              <h1>{roomData.status === 'waiting' ? `LOBBY: ${roomData.id}` : "FIM DE JOGO"}</h1>
-              <div className="lobby-list">
-                  <h3>Último Placar:</h3>
-                  <ul>
-                    {roomData.players.sort((a, b) => b.score - a.score).map(p => (
-                        <li key={p.id}>
-                            {p.nickname} {p.id===roomData.host?"(👑)":""} - <strong>{p.score} pts</strong>
-                        </li>
-                    ))}
-                  </ul>
-              </div>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
-                {roomData.status === 'waiting' && (isHost ? <button className="start-btn" onClick={startGame}>NOVA PARTIDA</button> : <p className="blink">Aguardando anfitrião...</p>)}
-                
-                <button 
-                    onClick={handleExit} 
-                    style={{ backgroundColor: '#d9534f', color: 'white' }}
-                >
-                    SAIR DA SALA
-                </button>
+              <div className="lobby-card">
+                  {roomData.status === 'finished' && (
+                      <div className="result-header">
+                          <h2>FIM DE JOGO</h2>
+                          <p className="winner-msg">{statusMessage}</p>
+                      </div>
+                  )}
+                  
+                  <h1 className="room-title">{roomData.status === 'waiting' ? `SALA: ${roomData.id}` : "PLACAR FINAL"}</h1>
+                  
+                  <div className="lobby-list">
+                      <h3>Jogadores:</h3>
+                      <ul>
+                        {roomData.players.sort((a, b) => b.score - a.score).map(p => (
+                            <li key={p.id} className={p.id === socket.id ? "my-player" : ""}>
+                                <span className="player-name">
+                                    {p.nickname} {p.id === roomData.host ? "👑" : ""}
+                                </span>
+                                <span className="player-score">{p.score} pts</span>
+                            </li>
+                        ))}
+                      </ul>
+                  </div>
+                  
+                  <div className="lobby-actions">
+                    {roomData.status === 'waiting' && (
+                        isHost ? 
+                        <button className="btn-main" onClick={startGame}>INICIAR PARTIDA</button> : 
+                        <div className="waiting-msg"><p className="blink">Aguardando anfitrião...</p></div>
+                    )}
+                    
+                    <button className="btn-secondary" onClick={handleExit}>
+                        SAIR DA SALA
+                    </button>
+                  </div>
               </div>
           </div>
       );

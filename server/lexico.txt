@@ -24013,7 +24013,6 @@ bizarro
 bizigomático
 bizogue
 bizu
-black
 blackout
 blague
 blandícia
@@ -24106,7 +24105,6 @@ blefista
 bleforé
 blemômetro
 blenadenite
-blend
 blenda
 blenelitria
 blenenterite
@@ -24160,12 +24158,10 @@ bloquear
 bloqueio
 bloquista
 bluco
-blues
 bluetooth
 blumenauense
 blusa
 blusão
-blush
 boa
 boá
 boaba
@@ -26140,7 +26136,6 @@ bugalhinha
 bugalho
 bugalhudo
 buganvília
-buggy
 bugia
 bugiado
 bugiar
@@ -31429,7 +31424,6 @@ catauré
 cataviana
 cataxia
 catazona
-catch
 cate
 cateação
 cateamento
@@ -35531,7 +35525,6 @@ clavuliforme
 claytônia
 clazomeniano
 clazomênio
-clean
 clearance
 clêmatis
 clematite
@@ -35800,7 +35793,6 @@ cloroso
 clorotetraciclina
 clorótico
 clorpromazina
-close
 closet
 clostrídio
 clotoide
@@ -40828,7 +40820,6 @@ coulrofobia
 couma
 coumarourana
 country
-coupé
 couplet
 coura
 couraça
@@ -52153,11 +52144,9 @@ drilo
 drímia
 drímis
 drimônia
-drink
 drinque
 driófis
 driopiteco
-drive
 driver
 droga
 drogado
@@ -52193,7 +52182,6 @@ dropar
 dropaz
 drope
 dropes
-drops
 drósera
 droserácea
 droseráceas
@@ -74216,7 +74204,6 @@ greda
 grede
 gredelém
 gredoso
-green
 grega
 gregal
 gregalada
@@ -75683,7 +75670,6 @@ hederiforme
 hederígero
 hederina
 hederoso
-hedge
 hediondamente
 hediondez
 hediondeza
@@ -76209,7 +76195,6 @@ henoteísmo
 henótico
 henriquenho
 henriquino
-henry
 hentriacontaedro
 hentriacontágono
 heortologia
@@ -82583,7 +82568,6 @@ inovativo
 inox
 inoxidável
 inóxio
-input
 inqualificável
 inquartação
 inquartar
@@ -86564,7 +86548,6 @@ kombucha
 kosher
 kosovar
 koto
-kraft
 krameriácea
 kremlin
 krill
@@ -89762,7 +89745,6 @@ logomaníaco
 logomaquia
 logomáquico
 logomarca
-logon
 logopatia
 logopedia
 logopédico
@@ -93318,7 +93300,6 @@ marsupialidade
 marsupialização
 marsúpio
 marsúpios
-marta
 martagão
 marte
 marteirar
@@ -93625,7 +93606,6 @@ matassa
 matatarana
 matataranha
 matataúba
-match
 mate
 mateador
 matear
@@ -106671,7 +106651,6 @@ papelota
 papelote
 papelucho
 papeludo
-paper
 papesa
 papiamento
 papião
@@ -109216,7 +109195,6 @@ penitenciarista
 penitencieiro
 penitente
 penível
-penny
 peno
 penol
 penologia
@@ -112840,7 +112818,6 @@ plurivalência
 plurivalente
 plurivalve
 plurívoco
-plush
 plutão
 plutarco
 plutarquiano
@@ -117907,7 +117884,6 @@ quede
 quedê
 quediva
 quedo
-queen
 quefazer
 quefazeres
 quefir
@@ -121795,7 +121771,6 @@ relato
 relator
 relatoria
 relatório
-relax
 relaxação
 relaxadamente
 relaxado
@@ -124973,7 +124948,6 @@ rouco
 roufenhar
 roufenho
 rouge
-round
 roupa
 roupagem
 roupão
@@ -131327,14 +131301,12 @@ sprintar
 sprinter
 sputnik
 squash
-squid
 sr
 staccato
 stackhousiácea
 staff
 stalinismo
 stalinista
-stand
 standard
 star
 starter
@@ -131345,8 +131317,6 @@ stendhaliano
 stent
 stephanita
 stevensita
-stilb
-still
 stokes
 stop
 storyboard
@@ -131357,7 +131327,6 @@ stravinskyano
 stress
 stretto
 strindberguiano
-strip
 stripper
 striptease
 stripteaser
@@ -132994,8 +132963,6 @@ suzanense
 svedberg
 swap
 sweepstake
-swell
-swing
 ta
 tá
 taã
@@ -137692,7 +137659,6 @@ traidoramente
 traidoria
 trailer
 traimento
-train
 traina
 trainar
 trainee
@@ -139258,7 +139224,6 @@ trípoli
 tripolino
 tripolitano
 tripolo
-trips
 tripsina
 tripsínico
 tripsinogênio
@@ -140365,7 +140330,6 @@ tuza
 tuzina
 tweed
 tweeter
-twist
 txapacura
 txicão
 txucarramãe
@@ -144545,7 +144509,6 @@ wattado
 wattímetro
 wavellita
 web
-weber
 weberiano
 webinar
 website

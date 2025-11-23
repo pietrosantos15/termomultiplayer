@@ -396,3 +396,141 @@ button {
     font-size: 1rem;
   }
 }
+
+/* =========================================
+   ESTILOS DO LOBBY E PLACAR (Melhorado)
+   ========================================= */
+
+.lobby-card {
+  background-color: var(--bg-secondary);
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border: 1px solid var(--border-color);
+}
+
+.room-title {
+  font-size: 2rem;
+  color: var(--text-color);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 15px;
+}
+
+.result-header {
+  background-color: rgba(83, 141, 78, 0.2); /* Fundo verde transparente */
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid var(--correct-color);
+  margin-bottom: 10px;
+}
+
+.winner-msg {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Lista de Jogadores */
+.lobby-list h3 {
+  text-align: left;
+  font-size: 1rem;
+  color: #818384;
+  margin-bottom: 10px;
+}
+
+.lobby-list ul {
+  background: var(--bg-color); /* Fundo mais escuro dentro do card */
+  padding: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.lobby-list li {
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+}
+
+.lobby-list li:last-child {
+  border-bottom: none;
+}
+
+/* Destaque para o próprio jogador */
+.lobby-list li.my-player {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--present-color); /* Amarelo */
+  font-weight: bold;
+}
+
+.player-name {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.player-score {
+  background: var(--bg-secondary);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+/* Botões de Ação */
+.lobby-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.btn-main {
+  background-color: var(--correct-color);
+  color: white;
+  padding: 16px;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  width: 100%;
+  transition: filter 0.2s, transform 0.1s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.btn-main:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: #d9534f; /* Vermelho suave */
+  border: 2px solid #d9534f;
+  padding: 14px;
+  font-size: 1rem;
+  border-radius: 8px;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: #d9534f;
+  color: white;
+}
+
+.waiting-msg {
+  text-align: center;
+  padding: 10px;
+  color: #818384;
+  font-style: italic;
+}
