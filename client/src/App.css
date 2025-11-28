@@ -7,11 +7,11 @@
   --text-color: #ffffff;
   --border-color: #3a3a3c;
   --key-bg: #818384;
-  
+
   /* Cores do Jogo */
-  --correct-color: #538d4e;  /* Verde */
-  --present-color: #b59f3b;  /* Amarelo */
-  --absent-color: #3a3a3c;   /* Cinza Escuro */
+  --correct-color: #538d4e; /* Verde */
+  --present-color: #b59f3b; /* Amarelo */
+  --absent-color: #3a3a3c; /* Cinza Escuro */
   --active-border: #565758;
 }
 
@@ -24,13 +24,15 @@
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   display: flex;
   justify-content: center;
   min-height: 100vh;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   text-align: center;
   margin-bottom: 1rem;
   font-weight: 700;
@@ -62,7 +64,7 @@ button {
   background-color: var(--bg-secondary);
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -147,7 +149,7 @@ button {
   display: flex;
   flex-direction: column;
   max-width: 250px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .timer-box {
@@ -155,7 +157,7 @@ button {
   text-align: center;
   margin-bottom: 20px;
   font-weight: bold;
-  background: rgba(0,0,0,0.2);
+  background: rgba(0, 0, 0, 0.2);
   padding: 10px;
   border-radius: 8px;
 }
@@ -164,16 +166,44 @@ button {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px; /* Menor gap */
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 5px;
+}
+
+/* Custom Scrollbar */
+.sidebar ul::-webkit-scrollbar {
+  width: 5px;
+}
+.sidebar ul::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+.sidebar ul::-webkit-scrollbar-thumb {
+  background: #565758;
+  border-radius: 3px;
+}
+.sidebar ul::-webkit-scrollbar-thumb:hover {
+  background: #818384;
 }
 
 .sidebar li {
   display: flex;
   justify-content: space-between;
-  padding: 10px;
-  background-color: var(--bg-color);
+  align-items: center;
+  padding: 8px 12px; /* Mais compacto */
+  background-color: rgba(255, 255, 255, 0.05); /* Fundo sutil */
+  border: 1px solid transparent;
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 0.85rem; /* Fonte menor */
+  transition: all 0.2s;
+}
+
+.sidebar li:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--border-color);
 }
 
 /* Área Central (Tabuleiro e Teclado) */
@@ -286,9 +316,15 @@ button {
   font-size: 0.9rem; /* Enter/Del menores */
 }
 
-.key-btn.green-key { background-color: var(--correct-color); }
-.key-btn.yellow-key { background-color: var(--present-color); }
-.key-btn.gray-key { background-color: var(--absent-color); }
+.key-btn.green-key {
+  background-color: var(--correct-color);
+}
+.key-btn.yellow-key {
+  background-color: var(--present-color);
+}
+.key-btn.gray-key {
+  background-color: var(--absent-color);
+}
 
 .key-btn:active {
   transform: scale(0.95);
@@ -307,7 +343,7 @@ button {
   padding: 15px 25px;
   border-radius: 5px;
   font-weight: bold;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   z-index: 1000;
   animation: fadeIn 0.3s ease;
 }
@@ -317,28 +353,53 @@ button {
 }
 
 @keyframes blinker {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 @keyframes pop {
-  0% { transform: scale(0.8); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(0.8);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes shake {
-  10%, 90% { transform: translate3d(-1px, 0, 0); }
-  20%, 80% { transform: translate3d(2px, 0, 0); }
-  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-  40%, 60% { transform: translate3d(4px, 0, 0); }
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
 }
 
 .shake {
-  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translate(-50%, -20px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
 
 /* =========================================
@@ -359,7 +420,7 @@ button {
     padding: 10px;
     order: 1; /* Jogar sidebar pro topo ou fundo se quiser */
   }
-  
+
   .sidebar ul {
     flex-direction: row;
     flex-wrap: wrap;
@@ -405,7 +466,7 @@ button {
   background-color: var(--bg-secondary);
   padding: 2.5rem;
   border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
   width: 100%;
   max-width: 450px;
   display: flex;
@@ -448,23 +509,29 @@ button {
 
 .lobby-list ul {
   background: var(--bg-color); /* Fundo mais escuro dentro do card */
-  padding: 0;
+  padding: 10px;
   border-radius: 8px;
-  overflow: hidden;
   border: 1px solid var(--border-color);
+
+  /* Grid Layout para quebrar linha */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  max-height: 350px; /* Limite de altura com scroll se necessário */
+  overflow-y: auto;
 }
 
 .lobby-list li {
-  padding: 15px 20px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  font-size: 1.1rem;
-}
-
-.lobby-list li:last-child {
-  border-bottom: none;
+  font-size: 1rem;
+  text-align: center;
+  gap: 5px;
 }
 
 /* Destaque para o próprio jogador */
@@ -504,7 +571,7 @@ button {
   border-radius: 8px;
   width: 100%;
   transition: filter 0.2s, transform 0.1s;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .btn-main:hover {
@@ -535,7 +602,6 @@ button {
   font-style: italic;
 }
 
-
 @media (max-width: 768px) {
   body {
     height: 100dvh;
@@ -544,81 +610,148 @@ button {
   }
 
   /* --- CORREÇÃO 1: LOGIN/ENTRAR --- */
-  .container { padding: 10px; height: 100%; overflow-y: auto; }
-  
+  .container {
+    padding: 10px;
+    height: 100%;
+    overflow-y: auto;
+  }
+
   .join-area {
-      flex-direction: column; /* Coloca Input em cima e Botão em baixo */
-      gap: 15px;
-      width: 100%;
+    flex-direction: column; /* Coloca Input em cima e Botão em baixo */
+    gap: 15px;
+    width: 100%;
   }
-  
+
   .join-area .login-input {
-      width: 100%; /* Garante largura total */
+    width: 100%; /* Garante largura total */
   }
-  
+
   .join-area button {
-      width: 100%; /* Garante largura total */
-      margin: 0;
+    width: 100%; /* Garante largura total */
+    margin: 0;
   }
 
   /* Layout do Jogo */
   .game-container {
     flex-direction: column;
-    padding: 0; margin: 0; width: 100%; height: 100dvh;
-    gap: 0; justify-content: flex-start;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100dvh;
+    gap: 0;
+    justify-content: flex-start;
   }
 
   .sidebar {
-    width: 100%; max-width: none; height: 60px;
-    flex-direction: row; align-items: center; justify-content: space-between;
-    padding: 0 10px; margin: 0; border-radius: 0; border-bottom: 1px solid #333;
-    flex: none; order: -1;
+    width: 100%;
+    max-width: none;
+    height: 60px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    margin: 0;
+    border-radius: 0;
+    border-bottom: 1px solid #333;
+    flex: none;
+    order: -1;
   }
 
-  .sidebar h3 { display: none; }
-  .timer-box { margin: 0; padding: 5px; font-size: 1.2rem; background: transparent; }
+  .sidebar h3 {
+    display: none;
+  }
+  .timer-box {
+    margin: 0;
+    padding: 5px;
+    font-size: 1.2rem;
+    background: transparent;
+  }
 
   .sidebar ul {
-    flex-direction: row; gap: 8px; overflow-x: auto;
-    max-width: 55%; display: flex; padding-bottom: 0;
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
+    max-width: 55%;
+    display: flex;
+    padding-bottom: 0;
   }
 
   .sidebar li {
-    padding: 4px 10px; font-size: 0.85rem; border: none;
-    white-space: nowrap; background: rgba(255,255,255,0.15);
-    gap: 8px; display: flex; align-items: center;
+    padding: 4px 10px;
+    font-size: 0.85rem;
+    border: none;
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.15);
+    gap: 8px;
+    display: flex;
+    align-items: center;
   }
 
   .sidebar li strong {
-      margin-left: 0; font-size: 0.9rem;
-      background: rgba(0,0,0,0.5); padding: 1px 6px; min-width: auto;
+    margin-left: 0;
+    font-size: 0.9rem;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1px 6px;
+    min-width: auto;
   }
 
-  .sidebar button { padding: 6px 10px !important; font-size: 0.7rem !important; width: auto !important; }
-  .sidebar > div { margin-top: 0 !important; }
+  .sidebar button {
+    padding: 6px 10px !important;
+    font-size: 0.7rem !important;
+    width: auto !important;
+  }
+  .sidebar > div {
+    margin-top: 0 !important;
+  }
 
-  .center-area { width: 100%; flex: 1; justify-content: space-between; padding: 5px 0; gap: 0; }
+  .center-area {
+    width: 100%;
+    flex: 1;
+    justify-content: space-between;
+    padding: 5px 0;
+    gap: 0;
+  }
 
   /* --- CORREÇÃO 2: TECLADO CORTADO --- */
   .board {
-    width: 100%; max-width: 360px; aspect-ratio: 5 / 6;
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 5 / 6;
     /* Diminuí a altura do board para sobrar espaço pro teclado */
-    max-height: calc(100dvh - 280px); 
-    margin: 0 auto; padding: 0 5px;
+    max-height: calc(100dvh - 280px);
+    margin: 0 auto;
+    padding: 0 5px;
   }
 
-  .tile { width: 100%; height: 100%; font-size: 1.6rem; border-width: 2px; }
-
-  .keyboard { 
-      width: 100%; 
-      padding: 0 5px 15px 5px; /* Mais espaço em baixo (15px) */
-      gap: 4px; 
-      background-color: var(--bg-color); 
+  .tile {
+    width: 100%;
+    height: 100%;
+    font-size: 1.6rem;
+    border-width: 2px;
   }
-  
-  .keyboard-row { gap: 3px; }
-  .key-btn { height: 45px; font-size: 0.95rem; border-radius: 4px; } /* Teclas levemente menores */
-  .key-btn.big-key { font-size: 0.75rem; flex: 1.2; }
-  
-  .toast-overlay { top: 50%; width: 85%; }
+
+  .keyboard {
+    width: 100%;
+    padding: 0 5px 15px 5px; /* Mais espaço em baixo (15px) */
+    gap: 4px;
+    background-color: var(--bg-color);
+  }
+
+  .keyboard-row {
+    gap: 3px;
+  }
+  .key-btn {
+    height: 45px;
+    font-size: 0.95rem;
+    border-radius: 4px;
+  } /* Teclas levemente menores */
+  .key-btn.big-key {
+    font-size: 0.75rem;
+    flex: 1.2;
+  }
+
+  .toast-overlay {
+    top: 50%;
+    width: 85%;
+  }
 }
