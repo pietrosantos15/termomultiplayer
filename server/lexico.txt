@@ -74086,6 +74086,7 @@ gratinado
 gratinar
 grátis
 grato
+grata
 gratuidade
 gratuitamente
 gratuitidade
@@ -144718,7 +144719,6 @@ xenomaníaco
 xenômano
 xenomenia
 xenomórfico
-xênon
 xenônio
 xenoparasito
 xenorexia

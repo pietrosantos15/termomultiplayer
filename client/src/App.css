@@ -112,11 +112,21 @@ button {
   flex: 1;
 }
 
+/* Em client/src/App.css */
+
 .lobby-list ul {
-  list-style: none;
   background: var(--bg-color);
-  padding: 1rem;
+  padding: 10px;
   border-radius: 8px;
+  border: 1px solid var(--border-color);
+
+  /* ALTERAÇÃO AQUI: */
+  display: flex; /* Mudado de grid para flex coluna para lista simples */
+  flex-direction: column;
+  gap: 10px;
+  
+  max-height: 40vh; /* Ocupa no máximo 40% da altura da tela */
+  overflow-y: auto; /* Habilita rolagem vertical se passar do tamanho */
 }
 
 .lobby-list li {
@@ -162,14 +172,19 @@ button {
   border-radius: 8px;
 }
 
+/* Em client/src/App.css (Versão Desktop) */
+
 .sidebar ul {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 6px; /* Menor gap */
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0;
+  gap: 6px;
+  
+  /* ALTERAÇÃO AQUI: */
+  flex: 1; /* Ocupa o espaço restante */
+  overflow-y: auto; /* Rolagem vertical */
+  min-height: 0; /* Importante para o Flexbox não estourar */
+  max-height: calc(100vh - 200px); /* Garante que não invada o botão de sair/timer */
   padding-right: 5px;
 }
 
@@ -411,25 +426,55 @@ button {
     padding: 5px;
   }
 
+  /* Em client/src/App.css - DENTRO DE @media (max-width: 768px) */
+
   .sidebar {
     width: 100%;
     max-width: none;
+    height: 60px;
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    order: 1; /* Jogar sidebar pro topo ou fundo se quiser */
+    justify-content: space-between;
+    padding: 0 10px;
+    margin: 0;
+    border-radius: 0;
+    border-bottom: 1px solid #333;
+    flex: none;
+    order: -1;
+    overflow: hidden; /* Impede que a barra lateral cresça */
   }
 
   .sidebar ul {
     flex-direction: row;
-    flex-wrap: wrap;
-    gap: 5px;
+    gap: 8px;
+    
+    /* ALTERAÇÃO CRÍTICA AQUI: */
+    flex-wrap: nowrap; /* Impede que os itens quebrem linha */
+    overflow-x: auto; /* Habilita rolagem lateral */
+    max-width: 60%; /* Deixa espaço para o timer e botão sair */
+    display: flex;
+    padding-bottom: 0;
+    
+    /* Esconde a barra de rolagem feia no mobile mas mantendo a função */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  /* Esconde scrollbar no Chrome/Safari/Opera */
+  .sidebar ul::-webkit-scrollbar {
+    display: none;
   }
 
   .sidebar li {
-    font-size: 0.8rem;
-    padding: 5px 8px;
+    padding: 4px 10px;
+    font-size: 0.85rem;
+    border: none;
+    white-space: nowrap; /* Garante que o nome não quebre linha */
+    background: rgba(255, 255, 255, 0.15);
+    gap: 8px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0; /* Impede que o item seja esmagado */
   }
 
   .timer-box {
@@ -754,4 +799,56 @@ button {
     top: 50%;
     width: 85%;
   }
+}
+
+::-webkit-scrollbar {
+  width: 8px;               /* Largura da barra vertical */
+  height: 8px;              /* Altura da barra horizontal (mobile/desktop) */
+}
+
+/* O "trilho" por onde a barra corre */
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2); 
+  border-radius: 4px;
+}
+
+/* A "parte móvel" da barra */
+::-webkit-scrollbar-thumb {
+  background-color: var(--border-color); /* Cinza escuro do tema */
+  border-radius: 4px;
+  border: 2px solid var(--bg-secondary); /* Espaço para não ficar colado */
+}
+
+/* Quando passa o mouse em cima da barra */
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--present-color); /* Fica amarelo (destaque) */
+}
+
+/* =========================================
+   AJUSTE ESPECÍFICO PARA A LISTA DO LOBBY
+   ========================================= */
+.lobby-list ul::-webkit-scrollbar-track {
+  background: var(--bg-color); /* Fundo mais escuro dentro da lista */
+}
+
+/* ... código existente ... */
+
+/* Adicione/Atualize esta classe para organizar os botões */
+.buttons-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+}
+
+.buttons-row button {
+  flex: 1; /* Faz os botões terem o mesmo tamanho */
+}
+
+/* Ajuste na área de login para usar flexbox */
+.login-box {
+  /* ... mantenha o resto ... */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
