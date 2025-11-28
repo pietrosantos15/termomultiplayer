@@ -4,7 +4,7 @@ import "./App.css";
 import { FaLinkedin } from "react-icons/fa";
 
 // SE ESTIVER RODANDO LOCALMENTE, USE "http://localhost:3001"
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect("https://servertermomultiplayer.onrender.com/");
 
 const KEYBOARD_KEYS = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
