@@ -4,15 +4,14 @@ import "./App.css";
 import { FaLinkedin } from "react-icons/fa";
 import { getRandomWord, getWordFromList } from "./words"; 
 
-const socket = io.connect("https://servertermomultiplayer.onrender.com/");
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001"; // http://localhost:3001
+const socket = io.connect(API_URL);
 
 const KEYBOARD_KEYS = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
   ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
   ["Z", "X", "C", "V", "B", "N", "M"]
 ];
-
-
 const removeAccents = (str) => {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
 };
@@ -20,7 +19,7 @@ const removeAccents = (str) => {
 function App() {
   const [isInGame, setIsInGame] = useState(false);
   const [gameMode, setGameMode] = useState(null); 
-  
+  const [isServerWake, setIsServerWake] = useState(false);
   const [nickname, setNickname] = useState("");
   const [roomCode, setRoomCode] = useState("");
   
