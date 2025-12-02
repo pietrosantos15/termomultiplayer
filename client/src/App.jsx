@@ -4,7 +4,8 @@ import "./App.css";
 import { FaLinkedin } from "react-icons/fa";
 import { getRandomWord, getWordFromList } from "./words"; 
 
-const socket = io.connect("http://localhost:3000");
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001"; //http://localhost:3001
+const socket = io.connect(API_URL);
 
 const KEYBOARD_KEYS = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -47,7 +48,6 @@ function App() {
   useEffect(() => {
       roomDataRef.current = roomData;
   }, [roomData]);
-
 
   const showToast = (msg, duration = 3000) => {
       setToastMessage(msg);
