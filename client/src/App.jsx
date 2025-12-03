@@ -4,7 +4,7 @@ import "./App.css";
 import { FaLinkedin } from "react-icons/fa";
 import { getRandomWord, getWordFromList } from "./words"; 
 
-const socket = io.connect("https://servertermomultiplayer.onrender.com/");
+const socket = io.connect("https://servertermomultiplayer.onrender.com/"); //teste
 
 const KEYBOARD_KEYS = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
