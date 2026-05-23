@@ -32,7 +32,6 @@ function App() {
   const [toastMessage, setToastMessage] = useState(""); 
   const [timeLeft, setTimeLeft] = useState(60);
   const [isRoundEliminated, setIsRoundEliminated] = useState(false);
-  const [isSubmittingGuess, setIsSubmittingGuess] = useState(false);
   
   const [shakeRow, setShakeRow] = useState(false);
 
@@ -65,7 +64,6 @@ function App() {
       setMyGuesses([]);
       setCurrentGuess(Array(5).fill(""));
       setActiveTileIndex(0);
-      setIsSubmittingGuess(false);
       submitLockRef.current = false;
       setSoloFinished(false);
       setStatusMessage("");
@@ -133,7 +131,7 @@ function App() {
   };
 
   const handleInputChar = (char) => {
-      if (activeTileIndex > 4 || isWinner || isRoundEliminated || soloFinished || isSubmittingGuess) return;
+      if (activeTileIndex > 4 || isWinner || isRoundEliminated || soloFinished) return;
       if (!currentGuess.includes("")) return;
       const newGuess = [...currentGuess];
       newGuess[activeTileIndex] = char;
@@ -142,7 +140,7 @@ function App() {
   };
 
   const handleBackspace = () => {
-      if (isWinner || isRoundEliminated || soloFinished || isSubmittingGuess) return;
+      if (isWinner || isRoundEliminated || soloFinished) return;
       const newGuess = [...currentGuess];
       if (newGuess[activeTileIndex] !== "") {
           newGuess[activeTileIndex] = "";
@@ -163,10 +161,12 @@ function App() {
               verifySoloGuess(word);
           } else {
               submitLockRef.current = true;
-              setIsSubmittingGuess(true);
               setCurrentGuess(Array(5).fill(""));
               setActiveTileIndex(0);
               socket.emit("submit_guess", { roomId: roomDataRef.current?.id, guess: word }); 
+              setTimeout(() => {
+                  submitLockRef.current = false;
+              }, 150);
           }
       } else {
           showToast("Complete a palavra!", 1000);
@@ -199,10 +199,7 @@ function App() {
     socket.on("timer_update", (time) => setTimeLeft(time));
     socket.on("guess_feedback", (history) => {
         submitLockRef.current = false;
-        setIsSubmittingGuess(false);
         setMyGuesses(history);
-        setCurrentGuess(Array(5).fill(""));
-        setActiveTileIndex(0);
     });
     socket.on("round_winner_alert", (data) => {
         const secretWord = data.word; 
@@ -211,25 +208,21 @@ function App() {
     });
     socket.on("word_skipped_alert", (msg) => {
         submitLockRef.current = false;
-        setIsSubmittingGuess(false);
         showToast(`❌ ${msg}`, 3000);
     });
     socket.on("eliminated_round", () => {
         submitLockRef.current = false;
-        setIsSubmittingGuess(false);
         setIsRoundEliminated(true);
         showToast("💀 Bloqueado! Aguarde...", 1500);
     });
     socket.on("invalid_word_alert", (msg) => {
         submitLockRef.current = false;
-        setIsSubmittingGuess(false);
         showToast(`🚫 ${msg}`, 1000);
         setShakeRow(true);
         setTimeout(() => setShakeRow(false), 500);
     });
     socket.on("reset_board_force", () => {
         submitLockRef.current = false;
-        setIsSubmittingGuess(false);
         setMyGuesses([]);
         setCurrentGuess(Array(5).fill(""));
         setActiveTileIndex(0);
@@ -243,7 +236,6 @@ function App() {
     });
     socket.on("back_to_lobby", () => {
         submitLockRef.current = false;
-        setIsSubmittingGuess(false);
         setMyGuesses([]);
         setStatusMessage("");
         setCurrentGuess(Array(5).fill(""));
@@ -275,7 +267,7 @@ function App() {
     };
     window.addEventListener('keydown', handleGlobalKeyDown);
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
-  }, [isInGame, statusMessage, isRoundEliminated, isWinner, currentGuess, activeTileIndex, gameMode, soloFinished, isSubmittingGuess]);
+  }, [isInGame, statusMessage, isRoundEliminated, isWinner, currentGuess, activeTileIndex, gameMode, soloFinished]);
 
   const handleNicknameChange = (e) => { setNickname(e.target.value); nicknameRef.current = e.target.value; };
   const createRoom = () => { if (!nickname) return alert("Digite um nick!"); setGameMode('multi'); socket.emit("create_room", nickname); };
@@ -398,13 +390,13 @@ function App() {
             {KEYBOARD_KEYS.map((row, i) => (
                 <div key={i} className="keyboard-row">
                     {row.map(key => (
-                        <button key={key} className={`key-btn ${getKeyColor(key)}`} onClick={() => handleInputChar(key)} disabled={isWinner || soloFinished || isSubmittingGuess}>{key}</button>
+                        <button key={key} className={`key-btn ${getKeyColor(key)}`} onClick={() => handleInputChar(key)} disabled={isWinner || soloFinished}>{key}</button>
                     ))}
                 </div>
             ))}
             <div className="keyboard-row">
-                <button className="key-btn big-key" onClick={handleEnter} disabled={isWinner || soloFinished || isSubmittingGuess}>ENTER</button>
-                <button className="key-btn big-key" onClick={handleBackspace} disabled={isWinner || soloFinished || isSubmittingGuess}>⌫</button>
+                <button className="key-btn big-key" onClick={handleEnter} disabled={isWinner || soloFinished}>ENTER</button>
+                <button className="key-btn big-key" onClick={handleBackspace} disabled={isWinner || soloFinished}>⌫</button>
             </div>
         </div>
       </div>
