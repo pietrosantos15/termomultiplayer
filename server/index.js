@@ -210,6 +210,14 @@ io.on("connection", (socket) => {
     const player = room.players.find(p => p.id === socket.id);
     if (!player || player.eliminated) return;
 
+    if (player.guesses.some(g => {
+        const oldGuess = g.word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+        return oldGuess === guessClean;
+    })) {
+        socket.emit("guess_feedback", player.guesses);
+        return;
+    }
+
     const secretWord = room.word; 
     player.attempts += 1;
 

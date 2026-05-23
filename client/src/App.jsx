@@ -32,6 +32,7 @@ function App() {
   const [toastMessage, setToastMessage] = useState(""); 
   const [timeLeft, setTimeLeft] = useState(60);
   const [isRoundEliminated, setIsRoundEliminated] = useState(false);
+  const [isSubmittingGuess, setIsSubmittingGuess] = useState(false);
   
   const [shakeRow, setShakeRow] = useState(false);
 
@@ -40,6 +41,7 @@ function App() {
 
   const nicknameRef = useRef("");
   const roomDataRef = useRef(null);
+  const submitLockRef = useRef(false);
 
   const isWinner = myGuesses.length > 0 && 
                    myGuesses[myGuesses.length - 1].colors.every(c => c === 'green');
@@ -63,6 +65,8 @@ function App() {
       setMyGuesses([]);
       setCurrentGuess(Array(5).fill(""));
       setActiveTileIndex(0);
+      setIsSubmittingGuess(false);
+      submitLockRef.current = false;
       setSoloFinished(false);
       setStatusMessage("");
   };
@@ -129,7 +133,8 @@ function App() {
   };
 
   const handleInputChar = (char) => {
-      if (activeTileIndex > 4 || isWinner || isRoundEliminated || soloFinished) return;
+      if (activeTileIndex > 4 || isWinner || isRoundEliminated || soloFinished || isSubmittingGuess) return;
+      if (!currentGuess.includes("")) return;
       const newGuess = [...currentGuess];
       newGuess[activeTileIndex] = char;
       setCurrentGuess(newGuess);
@@ -137,7 +142,7 @@ function App() {
   };
 
   const handleBackspace = () => {
-      if (isWinner || isRoundEliminated || soloFinished) return;
+      if (isWinner || isRoundEliminated || soloFinished || isSubmittingGuess) return;
       const newGuess = [...currentGuess];
       if (newGuess[activeTileIndex] !== "") {
           newGuess[activeTileIndex] = "";
@@ -151,12 +156,16 @@ function App() {
   };
 
   const handleEnter = () => { 
-      if (isWinner || isRoundEliminated || soloFinished) return;
+      if (isWinner || isRoundEliminated || soloFinished || submitLockRef.current) return;
       const word = currentGuess.join("");
       if (word.length === 5 && !currentGuess.includes("")) {
           if (gameMode === 'solo') {
               verifySoloGuess(word);
           } else {
+              submitLockRef.current = true;
+              setIsSubmittingGuess(true);
+              setCurrentGuess(Array(5).fill(""));
+              setActiveTileIndex(0);
               socket.emit("submit_guess", { roomId: roomDataRef.current?.id, guess: word }); 
           }
       } else {
@@ -188,23 +197,60 @@ function App() {
     socket.on("room_created", (id) => { setRoomCode(id); handleJoin(id, nicknameRef.current); });
     socket.on("update_room", (data) => setRoomData(data));
     socket.on("timer_update", (time) => setTimeLeft(time));
-    socket.on("guess_feedback", (history) => { setMyGuesses(history); setCurrentGuess(Array(5).fill("")); setActiveTileIndex(0); });
+    socket.on("guess_feedback", (history) => {
+        submitLockRef.current = false;
+        setIsSubmittingGuess(false);
+        setMyGuesses(history);
+        setCurrentGuess(Array(5).fill(""));
+        setActiveTileIndex(0);
+    });
     socket.on("round_winner_alert", (data) => {
         const secretWord = data.word; 
         if (secretWord) showToast(`🔔 ${data.winner} ACERTOU! A palavra era: ${secretWord}`, 1500);
         else showToast(`🔔 ${data.winner} ACERTOU!`, 1500);
     });
-    socket.on("word_skipped_alert", (msg) => showToast(`❌ ${msg}`, 3000));
-    socket.on("eliminated_round", () => { setIsRoundEliminated(true); showToast("💀 Bloqueado! Aguarde...", 1500); });
-    socket.on("invalid_word_alert", (msg) => { showToast(`🚫 ${msg}`, 1000); setShakeRow(true); setTimeout(() => setShakeRow(false), 500); });
-    socket.on("reset_board_force", () => { setMyGuesses([]); setCurrentGuess(Array(5).fill("")); setActiveTileIndex(0); setIsRoundEliminated(false); });
+    socket.on("word_skipped_alert", (msg) => {
+        submitLockRef.current = false;
+        setIsSubmittingGuess(false);
+        showToast(`❌ ${msg}`, 3000);
+    });
+    socket.on("eliminated_round", () => {
+        submitLockRef.current = false;
+        setIsSubmittingGuess(false);
+        setIsRoundEliminated(true);
+        showToast("💀 Bloqueado! Aguarde...", 1500);
+    });
+    socket.on("invalid_word_alert", (msg) => {
+        submitLockRef.current = false;
+        setIsSubmittingGuess(false);
+        showToast(`🚫 ${msg}`, 1000);
+        setShakeRow(true);
+        setTimeout(() => setShakeRow(false), 500);
+    });
+    socket.on("reset_board_force", () => {
+        submitLockRef.current = false;
+        setIsSubmittingGuess(false);
+        setMyGuesses([]);
+        setCurrentGuess(Array(5).fill(""));
+        setActiveTileIndex(0);
+        setIsRoundEliminated(false);
+    });
     socket.on("game_over", (data) => {
       const reveal = data.word ? ` (Era: ${data.word})` : "";
       if (data.type === 'win') setStatusMessage(`🏆 VENCEDOR: ${data.winner} (${data.score} pts)${reveal}`);
       else if (data.type === 'draw') setStatusMessage(`🤝 EMPATE: ${data.winners} (${data.score} pts)${reveal}`);
       else setStatusMessage(`💤 Tempo Esgotado! A palavra era: ${data.word || '?'}`);
     });
-    socket.on("back_to_lobby", () => { setMyGuesses([]); setStatusMessage(""); setCurrentGuess(Array(5).fill("")); setActiveTileIndex(0); setIsRoundEliminated(false); setToastMessage(""); });
+    socket.on("back_to_lobby", () => {
+        submitLockRef.current = false;
+        setIsSubmittingGuess(false);
+        setMyGuesses([]);
+        setStatusMessage("");
+        setCurrentGuess(Array(5).fill(""));
+        setActiveTileIndex(0);
+        setIsRoundEliminated(false);
+        setToastMessage("");
+    });
 
     return () => {
       socket.off("room_created"); socket.off("update_room"); socket.off("timer_update"); socket.off("guess_feedback");
@@ -229,7 +275,7 @@ function App() {
     };
     window.addEventListener('keydown', handleGlobalKeyDown);
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
-  }, [isInGame, statusMessage, isRoundEliminated, isWinner, currentGuess, activeTileIndex, gameMode, soloFinished]);
+  }, [isInGame, statusMessage, isRoundEliminated, isWinner, currentGuess, activeTileIndex, gameMode, soloFinished, isSubmittingGuess]);
 
   const handleNicknameChange = (e) => { setNickname(e.target.value); nicknameRef.current = e.target.value; };
   const createRoom = () => { if (!nickname) return alert("Digite um nick!"); setGameMode('multi'); socket.emit("create_room", nickname); };
@@ -352,13 +398,13 @@ function App() {
             {KEYBOARD_KEYS.map((row, i) => (
                 <div key={i} className="keyboard-row">
                     {row.map(key => (
-                        <button key={key} className={`key-btn ${getKeyColor(key)}`} onClick={() => handleInputChar(key)} disabled={isWinner || soloFinished}>{key}</button>
+                        <button key={key} className={`key-btn ${getKeyColor(key)}`} onClick={() => handleInputChar(key)} disabled={isWinner || soloFinished || isSubmittingGuess}>{key}</button>
                     ))}
                 </div>
             ))}
             <div className="keyboard-row">
-                <button className="key-btn big-key" onClick={handleEnter} disabled={isWinner || soloFinished}>ENTER</button>
-                <button className="key-btn big-key" onClick={handleBackspace} disabled={isWinner || soloFinished}>⌫</button>
+                <button className="key-btn big-key" onClick={handleEnter} disabled={isWinner || soloFinished || isSubmittingGuess}>ENTER</button>
+                <button className="key-btn big-key" onClick={handleBackspace} disabled={isWinner || soloFinished || isSubmittingGuess}>⌫</button>
             </div>
         </div>
       </div>
